@@ -6,7 +6,7 @@ from models import Category
 from django.template.context import RequestContext
 
 class LinkContent(models.Model):
-    
+    """ Content type which renders all links from a selected Category """
     category = models.ForeignKey(Category, blank=True, null=True,
                                  help_text=_('Leave blank to list all categories.'))
     
