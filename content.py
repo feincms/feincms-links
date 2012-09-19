@@ -1,36 +1,38 @@
-from django.db import models
 from django import forms
+from django.db import models
+from django.contrib.admin.widgets import ForeignKeyRawIdWidget
+from django.template.context import RequestContext
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
-from models import Category
-from django.template.context import RequestContext
 from feincms.module.page.models import Page
-from django.contrib.admin.widgets import ForeignKeyRawIdWidget
-from feincms.admin.editor import ItemEditorForm
+from feincms.admin.item_editor import ItemEditorForm
+
+from models import Category
+
 
 class LinkContent(models.Model):
     """ Content type which renders all links from a selected Category """
     category = models.ForeignKey(Category, blank=True, null=True,
                                  help_text=_('Leave blank to list all categories.'))
-    
+
     class Meta:
         abstract = True
         verbose_name = _('Linklist')
         verbose_name_plural = _('Linklists')
-    
+
     def render(self, **kwargs):
         request = kwargs.get('request')
 
         if self.category:
-            return render_to_string('content/links/category.html', 
-                                    {'category': self.category}, 
+            return render_to_string('content/links/category.html',
+                                    {'category': self.category},
                                     context_instance=RequestContext(request))
 
         categories = Category.objects.all()
         return render_to_string('content/links/all_categories.html', {
                 'categories' : categories}, context_instance=RequestContext(request))
-        
+
 DEFAULT_CSS_CLASSES = (('link', _('Link')),
                        ('button', _('Button')),
 )
@@ -52,15 +54,15 @@ class PrettyLinkContent(models.Model):
     page = models.ForeignKey(Page, blank=True, null=True, verbose_name=_('Page'),
                              related_name="%(app_label)s_%(class)s_related",
                              help_text = _('Optionally link directly to a page on this website'))
-    
+
     class Meta:
         abstract = True
         verbose_name = _('Link')
         verbose_name_plural = _('Links')
-    
+
     def __unicode__(self):
         return unicode(self.text)
-    
+
     def render(self, **kwargs):
         request = kwargs.get('request')
         if self.url:
@@ -69,5 +71,5 @@ class PrettyLinkContent(models.Model):
             self.link = self.page.get_absolute_url()
         else :
             self.link = "No URL defined."
-        return render_to_string('content/links/single.html', {'content': self }, 
+        return render_to_string('content/links/single.html', {'content': self },
                                 RequestContext(request))
