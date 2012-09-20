@@ -1,7 +1,6 @@
-{% load feinheit_base %}
 {% for category in categories %}
 <h2>{{ category.name }}</h2>
-<ul {% context_menu category %}>
+<ul>
 	{% for link in category.link_set.all %}
 		<li>
 			<a href="{{ link.url }}" title="{{ link.desciprion }}">
