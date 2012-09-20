@@ -11,14 +11,14 @@ class LinkAdmin(admin.ModelAdmin):
 
 
 class LinkOrderForm(forms.ModelForm):
-    model = Link
-
     class Media:
+        model = Link
         js = (
             'https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js',
             'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js',
             settings.STATIC_URL + 'feincms_links/move-order.js',
         )
+
 
 class LinkAdminInline(admin.StackedInline):
     model = Link

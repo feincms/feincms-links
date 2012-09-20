@@ -1,75 +1,78 @@
-from django import forms
 from django.db import models
-from django.contrib.admin.widgets import ForeignKeyRawIdWidget
-from django.template.context import RequestContext
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.module.page.models import Page
-from feincms.admin.item_editor import ItemEditorForm
+from feincms.admin.item_editor import FeinCMSInline
 
-from models import Category
+from .models import Category
 
 
 class LinkContent(models.Model):
-    """ Content type which renders all links from a selected Category """
+    """ Content type which renders all links from a selected category"""
+
     category = models.ForeignKey(Category, blank=True, null=True,
-                                 help_text=_('Leave blank to list all categories.'))
+         help_text=_('Leave blank to list all categories.'))
 
     class Meta:
         abstract = True
-        verbose_name = _('Linklist')
-        verbose_name_plural = _('Linklists')
+        verbose_name = _('link list')
+        verbose_name_plural = _('link lists')
 
     def render(self, **kwargs):
-        request = kwargs.get('request')
-
         if self.category:
-            return render_to_string('content/links/category.html',
-                                    {'category': self.category},
-                                    context_instance=RequestContext(request))
+            return render_to_string('content/links/category.html', {
+                'category': self.category,
+                }, context_instance=kwargs.get('context'))
 
-        categories = Category.objects.all()
         return render_to_string('content/links/all_categories.html', {
-                'categories' : categories}, context_instance=RequestContext(request))
+            'categories': Category.objects.all(),
+            }, context_instance=kwargs.get('context'))
 
-DEFAULT_CSS_CLASSES = (('link', _('Link')),
-                       ('button', _('Button')),
+
+DEFAULT_CSS_CLASSES = (
+    ('link', _('Link')),
+    ('button', _('Button')),
 )
+
+
+class PrettyLinkContentInline(FeinCMSInline):
+    raw_id_fields = ('page',)
+
 
 class PrettyLinkContent(models.Model):
     """ Renders a link using a template """
     @classmethod
     def initialize_type(cls, LINK_CSS_CLASS_CHOICES=DEFAULT_CSS_CLASSES, **kwargs):
-        cls.add_to_class('style', models.CharField(max_length=20, choices=LINK_CSS_CLASS_CHOICES,
-                                  default=LINK_CSS_CLASS_CHOICES[0][0]))
-        class PrettyLinkContentAdminForm(ItemEditorForm):
-            page = forms.ModelChoiceField(queryset=Page.objects.active(),
-                widget=ForeignKeyRawIdWidget(PrettyLinkContent._meta.get_field('page').rel),
-                label=_('Page'))
-        cls.feincms_item_editor_form = PrettyLinkContentAdminForm
+        cls.add_to_class('style',
+            models.CharField(_('style'), max_length=20,
+                choices=LINK_CSS_CLASS_CHOICES,
+                default=LINK_CSS_CLASS_CHOICES[0][0],
+                ))
 
-    text = models.CharField(_('Text'), max_length=200)
+    text = models.CharField(_('text'), max_length=200)
     url = models.URLField(_('URL'), blank=True)
-    page = models.ForeignKey(Page, blank=True, null=True, verbose_name=_('Page'),
-                             related_name="%(app_label)s_%(class)s_related",
-                             help_text = _('Optionally link directly to a page on this website'))
+    page = models.ForeignKey(Page, blank=True, null=True,
+        verbose_name=_('page'),
+        related_name='+',
+        help_text=_('Optionally link directly to a page on this website.'))
 
     class Meta:
         abstract = True
-        verbose_name = _('Link')
-        verbose_name_plural = _('Links')
+        verbose_name = _('link')
+        verbose_name_plural = _('links')
 
     def __unicode__(self):
-        return unicode(self.text)
+        return self.text
 
     def render(self, **kwargs):
-        request = kwargs.get('request')
         if self.url:
             self.link = url
         elif self.page:
             self.link = self.page.get_absolute_url()
         else :
             self.link = "No URL defined."
-        return render_to_string('content/links/single.html', {'content': self },
-                                RequestContext(request))
+
+        return render_to_string('content/links/single.html', {
+            'content': self,
+            }, context_instance=kwargs.get('context'))
