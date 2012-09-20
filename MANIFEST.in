@@ -1,0 +1,7 @@
+include LICENSE
+include MANIFEST.in
+include README.rst
+include setuplib.py
+recursive-include feincms_links/static *
+recursive-include feincms_links/locale *
+recursive-include feincms_links/templates *

@@ -1,0 +1,14 @@
+{% load feinheit_base %}
+
+<div class="linklist" {% context_menu category %}>
+    <h2 class="link-category-name">{{ category.name }}</h2>
+    <ul class="linklist">
+    	{% for link in category.link_set.all %}
+    		<li>
+    			<a class="linklist-link" href="{{ link.url }}" title="{{ link.description }}">
+    				{{ link.name }}
+    			</a>
+    		</li>
+    	{% endfor %}
+    </ul>
+</div>
