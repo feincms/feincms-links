@@ -66,6 +66,8 @@ class LinkContent(models.Model):
             context_instance=kwargs.get('context'))
 
 
+'''
+# TODO does anyone use this?
 DEFAULT_CSS_CLASSES = (
     ('link', _('Link')),
     ('button', _('Button')),
@@ -112,3 +114,4 @@ class PrettyLinkContent(models.Model):
         return render_to_string('content/links/single.html', {
             'content': self,
             }, context_instance=kwargs.get('context'))
+'''
