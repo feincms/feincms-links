@@ -1,12 +1,15 @@
-{% for category in categories %}
-<h2>{{ category.name }}</h2>
-<ul>
-	{% for link in category.link_set.all %}
-		<li>
-			<a href="{{ link.url }}" title="{{ link.desciprion }}">
-				{{ link.name }}
-			</a>
-		</li>
-	{% endfor %}
-</ul>
-{% endfor %}
+<div class="linklist">
+  {% regroup links by category as link_lists %}
+  {% for link_list in link_lists %}
+    <h2 class="link-category-name">{{ link_list.grouper.name }}</h2>
+    <ul class="linklist">
+      {% for link in link_list.list %}
+        <li>
+          <a class="linklist-link" href="{{ link.url }}"
+              title="{{ link.description }}">
+            {{ link.name }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endfor %}
+</div>

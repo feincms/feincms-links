@@ -51,14 +51,19 @@ class LinkContent(models.Model):
         verbose_name_plural = _('link lists')
 
     def render(self, **kwargs):
+        ctx = {'content': self}
         if self.category:
-            return render_to_string('content/links/category.html', {
-                'category': self.category,
-                }, context_instance=kwargs.get('context'))
+            ctx['links'] = self.category.link_set.all()
+        else:
+            ctx['links'] = Link.objects.order_by(
+                'category__ordering',
+                'category__name',
+                'ordering',
+                'name',
+                )
 
-        return render_to_string('content/links/all_categories.html', {
-            'categories': Category.objects.all(),
-            }, context_instance=kwargs.get('context'))
+        return render_to_string('content/links/default.html', ctx,
+            context_instance=kwargs.get('context'))
 
 
 DEFAULT_CSS_CLASSES = (
