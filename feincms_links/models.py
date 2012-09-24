@@ -7,9 +7,10 @@ from feincms.admin.item_editor import FeinCMSInline
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.CharField(max_length=200, null=True, blank=True)
-    ordering = models.PositiveIntegerField(default=0, null=True)
+    name = models.CharField(_('name'), max_length=100)
+    description = models.CharField(_('description'), max_length=200,
+        blank=True)
+    ordering = models.PositiveIntegerField(_('ordering'), default=0)
 
     def __unicode__(self):
         return self.name
@@ -21,11 +22,12 @@ class Category(models.Model):
 
 
 class Link(models.Model):
-    name = models.CharField(max_length=100,
-    description = models.CharField(max_length=200, blank=True)
-    url = models.URLField()
-    category = models.ForeignKey(Category)
-    ordering = models.PositiveIntegerField(default=0, null=True)
+    name = models.CharField(_('name'), max_length=100)
+    description = models.CharField(_('description'), max_length=200,
+        blank=True)
+    url = models.URLField(_('URL'))
+    category = models.ForeignKey(Category, verbose_name=_('category'))
+    ordering = models.PositiveIntegerField(_('ordering'), default=0)
 
     class Meta:
         ordering = ('ordering', 'name')
@@ -43,6 +45,7 @@ class LinkContent(models.Model):
     """ Content type which renders all links from a selected category"""
 
     category = models.ForeignKey(Category, blank=True, null=True,
+        verbose_name=_('category'),
          help_text=_('Leave blank to list all categories.'))
 
     class Meta:
