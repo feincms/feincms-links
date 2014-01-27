@@ -21,7 +21,7 @@ INSTALLED_APPS = (
     'mptt',
     'feincms.module.page',
     'feincms_links',
-    'tests'
+    'testapp'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -44,7 +44,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages'
 )
 
-ROOT_URLCONF = 'tests.urls'
+ROOT_URLCONF = 'testapp.urls'
 
 DATABASES = {
     'default': {

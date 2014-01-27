@@ -3,7 +3,7 @@ from django.test.client import Client
 
 from feincms.module.page.models import Page
 from feincms_links.models import Category, Link
-from tests.models import PageLinkContent
+from testapp.models import PageLinkContent
 
 
 class LinkContentTest(TestCase):
